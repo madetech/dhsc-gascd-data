@@ -1,0 +1,26 @@
+{
+	"name": "Json_Generic_CT_API",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "CTGenericAPIHTTP",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"RelativeURL": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "@dataset().RelativeURL",
+					"type": "Expression"
+				}
+			}
+		},
+		"schema": {}
+	}
+}

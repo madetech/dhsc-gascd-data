@@ -1,0 +1,4 @@
+CREATE SCHEMA [ASC_Statistics]
+    AUTHORIZATION [dbo];
+GO
+

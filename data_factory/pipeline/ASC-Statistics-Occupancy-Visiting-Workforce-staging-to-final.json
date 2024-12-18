@@ -1,0 +1,31 @@
+{
+	"name": "ASC-Statistics-Occupancy-Visiting-Workforce-staging-to-final",
+	"properties": {
+		"activities": [
+			{
+				"name": "Stored procedure1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ASC_Statistics].[p_occupancy_visiting_workforce_staging_to_final]"
+				},
+				"linkedServiceName": {
+					"referenceName": "Analytical_Datastore",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "ASC_Statistics/ASC-Statistics-Occupancy-Visiting-Workforce"
+		},
+		"annotations": []
+	}
+}

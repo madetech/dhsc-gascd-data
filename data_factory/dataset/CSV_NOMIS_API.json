@@ -1,0 +1,30 @@
+{
+	"name": "CSV_NOMIS_API",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NOMISAPIHTTP",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"RelativeURL": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "@dataset().RelativeURL",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

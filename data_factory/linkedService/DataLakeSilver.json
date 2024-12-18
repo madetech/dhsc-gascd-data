@@ -1,0 +1,15 @@
+{
+	"name": "DataLakeSilver",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://dapalphastsilverdev.dfs.core.windows.net/"
+		},
+		"connectVia": {
+			"referenceName": "DAPAlpha-IR",
+			"type": "IntegrationRuntimeReference"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
+}

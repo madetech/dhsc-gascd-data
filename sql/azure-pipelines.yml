@@ -1,0 +1,73 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - sql
+
+pool:
+  vmImage: windows-2019
+
+variables:
+- group: arm_service_connection
+
+parameters:
+- name: environments
+  type: object
+  default:
+  - name: dev
+    arm_service_connection: '$(dev_arm_service_connections)'
+  - name: prod
+    arm_service_connection: '$(prod_arm_service_connections)'
+- name: skip_dev
+  displayName: 'Skip dev deployment'
+  type: boolean
+  default: true
+
+
+
+stages:
+  - stage: Build
+    jobs:
+    - job: Build
+      steps:
+      - checkout: self
+      - task: VSBuild@1
+        inputs:
+          solution: 'sql\Analytical_Datastore\Analytical_Datastore.sqlproj'
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: 'sql\Analytical_Datastore\bin\Debug\'
+          artifact: 'Analytical_Datastore_Dacpac'
+          publishLocation: pipeline
+  - ${{ each environment in parameters.environments}}:
+    - stage: ${{environment.name}}
+      condition: or(not(eq('${{environment.name}}', 'dev')), and(eq('${{environment.name}}', 'dev'), not(${{parameters.skip_dev}})))
+      jobs:
+      - deployment: DeployInfra
+        environment: ${{environment.name}}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - task: DownloadPipelineArtifact@2
+                inputs:
+                  artifact: Analytical_Datastore_Dacpac
+                  targetPath: '$(Pipeline.Workspace)'
+              - task: SqlAzureDacpacDeployment@1
+                inputs:
+                  azureSubscription: '${{environment.arm_service_connection}}'
+                  AuthenticationType: 'servicePrincipal'
+                  ServerName: 'dapalpha-sql-data-${{environment.name}}.database.windows.net'
+                  DatabaseName: 'Analytical_Datastore'
+                  deployType: 'DacpacTask'
+                  DeploymentAction: 'Publish'
+                  DacpacFile: '$(Pipeline.Workspace)/Analytical_Datastore.dacpac'
+                  AdditionalArguments: '/v:env=${{environment.name}}'
+                  IpDetectionMethod: 'AutoDetect'

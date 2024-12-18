@@ -1,0 +1,17 @@
+{
+	"name": "Databricks",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "https://adb-4134547879774050.10.azuredatabricks.net",
+			"authentication": "MSI",
+			"workspaceResourceId": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Databricks/workspaces/dapalpha-dbx-data-dev",
+			"existingClusterId": "0905-112434-gmukp89"
+		},
+		"connectVia": {
+			"referenceName": "DAPAlpha-IR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

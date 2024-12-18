@@ -1,0 +1,14 @@
+{
+	"name": "DataLakeDrop",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://dapalphastdropdev.dfs.core.windows.net/"
+		},
+		"connectVia": {
+			"referenceName": "DAPAlpha-IR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

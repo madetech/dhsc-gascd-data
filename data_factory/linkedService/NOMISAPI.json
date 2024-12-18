@@ -1,0 +1,12 @@
+{
+	"name": "NOMISAPI",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://www.nomisweb.co.uk/api/v01/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}

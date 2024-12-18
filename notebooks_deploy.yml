@@ -1,0 +1,73 @@
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - databricks
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: arm_service_connection
+- group: subscription_id
+
+parameters:
+- name: environments
+  type: object
+  default:
+  - name: dev
+    arm_connection: '$(dev_arm_service_connections)'
+    subscription_id: '$(dev_subscription_id)'
+  - name: prod
+    arm_connection: '$(prod_arm_service_connections)'
+    subscription_id: '$(prod_subscription_id)'
+
+stages:
+- stage: PublishArtifacts
+  jobs:
+  - job: PublishArtifacts
+    steps:
+    - checkout: self
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Build.Repository.LocalPath)/databricks/' 
+        artifact: 'DatabricksNotebooks'
+        publishLocation: 'pipeline'
+- ${{ each environment in parameters.environments}}:
+  - stage: ${{environment.name}}
+    jobs:
+    - deployment: DeployNotebooks
+      environment: ${{environment.name}}
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: UsePythonVersion@0
+              displayName: 'Use Python 3.8'
+              inputs:
+                versionSpec: 3.8
+            - script: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                artifact: DatabricksNotebooks
+                targetPath: '$(Pipeline.Workspace)/notebooks_to_deploy'
+            - task: AzureCLI@2
+              inputs:
+                azureSubscription: ${{environment.arm_connection}}
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  export DATABRICKS_TOKEN=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d --query "accessToken" --output tsv)
+                  echo "##vso[task.setvariable variable=DATABRICKS_TOKEN]$DATABRICKS_TOKEN"
+                  export DATABRICKS_HOST="https://$(az databricks workspace show --resource-group dapalpha-data-${{environment.name}}-rg --name dapalpha-dbx-data-${{environment.name}} --query workspaceUrl -o tsv)"
+                  echo "##vso[task.setvariable variable=DATABRICKS_HOST]$DATABRICKS_HOST"
+                addSpnToEnvironment: true
+            - task: Bash@3
+              inputs:
+                targetType: 'inline'
+                script: |
+                  databricks configure
+                  databricks workspace delete /pipeline_workbooks --recursive
+                  databricks workspace import-dir $(Pipeline.Workspace)/notebooks_to_deploy/ /pipeline_workbooks

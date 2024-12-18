@@ -1,0 +1,12 @@
+{
+	"name": "NOMISAPIHTTP",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://www.nomisweb.co.uk/api/v01/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}

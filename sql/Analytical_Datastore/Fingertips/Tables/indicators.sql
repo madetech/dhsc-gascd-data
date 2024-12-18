@@ -1,0 +1,31 @@
+CREATE TABLE [Fingertips].[indicators] (
+    [indicator_id]                             NVARCHAR (MAX) NULL,
+    [indicator_name]                           NVARCHAR (MAX) NULL,
+    [parent_code]                              NVARCHAR (MAX) NULL,
+    [parent_name]                              NVARCHAR (MAX) NULL,
+    [area_code]                                NVARCHAR (MAX) NULL,
+    [area_name]                                NVARCHAR (MAX) NULL,
+    [area_type]                                NVARCHAR (MAX) NULL,
+    [sex]                                      NVARCHAR (MAX) NULL,
+    [age]                                      NVARCHAR (MAX) NULL,
+    [category_type]                            NVARCHAR (MAX) NULL,
+    [category]                                 NVARCHAR (MAX) NULL,
+    [time_period]                              NVARCHAR (MAX) NULL,
+    [value]                                    FLOAT (53)     NULL,
+    [lower_ci_95_limit]                        FLOAT (53)     NULL,
+    [upper_ci_95_limit]                        FLOAT (53)     NULL,
+    [lower_ci_99_limit]                        FLOAT (53)     NULL,
+    [upper_ci_99_limit]                        FLOAT (53)     NULL,
+    [count]                                    FLOAT (53)     NULL,
+    [denominator]                              FLOAT (53)     NULL,
+    [value_note]                               NVARCHAR (MAX) NULL,
+    [recent_trend]                             NVARCHAR (MAX) NULL,
+    [compared_to_england_value_or_percentiles] NVARCHAR (MAX) NULL,
+    [column_not_used]                          NVARCHAR (MAX) NULL,
+    [time_period_sortable]                     NVARCHAR (MAX) NULL,
+    [new_data]                                 NVARCHAR (MAX) NULL,
+    [compared_to_goal]                         NVARCHAR (MAX) NULL,
+    [time_period_range]                        NVARCHAR (MAX) NULL
+);
+GO
+

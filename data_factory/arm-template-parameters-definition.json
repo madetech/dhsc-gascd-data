@@ -1,0 +1,40 @@
+{
+    "Microsoft.DataFactory/factories/triggers": {
+        "properties": {
+            "typeProperties": {
+                "scope": "="
+            }
+        }
+    },
+    "Microsoft.DataFactory/factories/linkedServices": {
+        "AzureSqlDatabase": {
+            "properties": {
+                "typeProperties": {
+                    "server": "=",
+                    "database": "="
+                }
+            }
+        },
+        "AzureBlobFS": {
+            "properties": {
+                "typeProperties": {
+                    "url": "="
+                }
+            }
+        },
+        "AzureDatabricks": {
+            "properties": {
+                "typeProperties": {
+                    "domain": "=",
+                    "workspaceResourceId": "=",
+                    "existingClusterId": "="
+                }
+            }
+        }
+    },
+    "Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints": {
+        "properties": {
+            "privateLinkResourceId": "="
+        }
+    }
+}

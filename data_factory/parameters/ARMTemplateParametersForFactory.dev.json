@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "value": "dapalpha-adf-data-dev"
+        },
+        "Analytical_Datastore_properties_typeProperties_server": {
+            "value": "dapalpha-sql-data-dev.database.windows.net"
+        },
+        "Analytical_Datastore_properties_typeProperties_database": {
+            "value": "Analytical_Datastore"
+        },
+        "Datalake_properties_typeProperties_url": {
+            "value": "https://dapalphadatastlakedev.dfs.core.windows.net/"
+        },
+        "DAPAlphaDatalakeEndpoint_properties_privateLinkResourceId": {
+            "value": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Storage/storageAccounts/dapalphadatastlakedev"
+        },
+        "DAPAlphaSQLServerEndpoint_properties_privateLinkResourceId": {
+            "value": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Sql/servers/dapalpha-sql-data-dev"
+        },
+        "Indicator_Metadata_Update_properties_typeProperties_scope": {
+            "value": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Storage/storageAccounts/dapalphadatastlakedev"
+        },
+        "Databricks_properties_typeProperties_domain": {
+            "value": "https://adb-4134547879774050.10.azuredatabricks.net"
+        },
+        "Databricks_properties_typeProperties_workspaceResourceId": {
+            "value": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Databricks/workspaces/dapalpha-dbx-data-dev"
+        },
+        "Databricks_properties_typeProperties_existingClusterId": {
+            "value": "0905-112434-gmukp89"
+        },
+        "DataLakeDropEndpoint_properties_privateLinkResourceId":{
+            "value": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Storage/storageAccounts/dapalphastdropdev"
+        },
+        "DataLakeBronzeEndpoint_properties_privateLinkResourceId":{
+            "value": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Storage/storageAccounts/dapalphastbronzedev"
+        },
+        "DataLakeSilverEndpoint_properties_privateLinkResourceId":{
+            "value": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Storage/storageAccounts/dapalphastsilverdev"
+        },
+        "DataLakeGoldEndpoint_properties_privateLinkResourceId":{
+            "value": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Storage/storageAccounts/dapalphastgolddev"
+        },
+        "DataLakeDrop_properties_typeProperties_url": {
+            "value": "https://dapalphastdropdev.dfs.core.windows.net/"
+        },
+        "DataLakeBronze_properties_typeProperties_url": {
+            "value": "https://dapalphastbronzedev.dfs.core.windows.net/"
+        },
+        "DataLakeSilver_properties_typeProperties_url": {
+            "value": "https://dapalphastsilverdev.dfs.core.windows.net/"
+        },
+        "DataLakeGold_properties_typeProperties_url": {
+            "value": "https://dapalphastgolddev.dfs.core.windows.net/"
+        }
+    }
+}

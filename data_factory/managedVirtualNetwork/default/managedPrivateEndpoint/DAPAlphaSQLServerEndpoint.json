@@ -1,0 +1,7 @@
+{
+	"name": "DAPAlphaSQLServerEndpoint",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Sql/servers/dapalpha-sql-data-dev",
+		"groupId": "sqlServer"
+	}
+}

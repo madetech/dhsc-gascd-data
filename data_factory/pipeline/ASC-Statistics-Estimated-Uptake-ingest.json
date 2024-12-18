@@ -1,0 +1,491 @@
+{
+	"name": "ASC-Statistics-Estimated-Uptake-ingest",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ExcelSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Area",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Area",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Area Unit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Area Unit",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Description",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Description",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "December 2021",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "December 2021",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "January 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "January 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "February 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "February 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "March 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "March 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "April 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "April 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "May 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "May 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "June 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "June 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "July 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "July 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "August 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "August 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "September 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "September 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "October 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "October 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "November 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "November 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "December 2022",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "December 2022",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "January 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "January 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "February 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "February 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "March 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "March 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "April 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "April 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "May 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "May 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "June 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "June 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "July 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "July 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "August 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "August 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "September 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "September 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "October 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "October 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "November 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "November 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "December 2023",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "December 2023",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "January 2024",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "January 2024",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "February 2024",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "February 2024",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "March 2024",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "March 2024",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "April 2024",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "April 2024",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "May 2024",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "May 2024",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "asc_statistics_estimated_uptake",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQLTable",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": "ASC_Statistics",
+							"table_name": "estimated_uptake_of_dscr_statistics_staging"
+						}
+					}
+				]
+			},
+			{
+				"name": "Stored procedure1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ASC_Statistics].[p_estimated_uptake_of_dscr_statistics_staging_to_final]"
+				},
+				"linkedServiceName": {
+					"referenceName": "Analytical_Datastore",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "ASC_Statistics/ASC-Statistics-Estimated-Uptake"
+		},
+		"annotations": []
+	}
+}

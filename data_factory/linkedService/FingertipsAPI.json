@@ -1,0 +1,16 @@
+{
+	"name": "FingertipsAPI",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://fingertips.phe.org.uk/api/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		},
+		"connectVia": {
+			"referenceName": "DAPAlpha-IR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

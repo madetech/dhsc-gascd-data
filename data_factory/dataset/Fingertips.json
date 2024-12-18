@@ -1,0 +1,15 @@
+{
+	"name": "Fingertips",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "FingertipsAPI",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": "all_data/csv/for_one_indicator?indicator_id=30314"
+		},
+		"schema": []
+	}
+}

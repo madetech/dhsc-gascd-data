@@ -1,0 +1,157 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - data_factory
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: arm_service_connection
+- group: subscription_id
+
+parameters:
+- name: environments
+  type: object
+  default:
+  - name: dev
+    arm_connection: '$(dev_arm_service_connections)'
+    subscription_id: '$(dev_subscription_id)'
+  - name: prod
+    arm_connection: '$(prod_arm_service_connections)'
+    subscription_id: '$(prod_subscription_id)'
+
+stages:
+  - stage: Build
+    jobs:
+    - job: Build
+      steps:
+      - checkout: self
+      - task: UseNode@1
+        inputs:
+          version: '18.x'
+        displayName: 'Install Node.js'
+      - task: Npm@1
+        inputs:
+          command: 'install'
+          workingDir: '$(Build.Repository.LocalPath)/data_factory' #replace with the package.json folder
+          verbose: true
+        displayName: 'Install npm package'
+      # Validates all of the Data Factory resources in the repository. You'll get the same validation errors as when "Validate All" is selected.
+      # Enter the appropriate subscription and name for the source factory. Either of the "Validate" or "Validate and Generate ARM temmplate" options are required to perform validation. Running both is unnecessary.
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          workingDir: '$(Build.Repository.LocalPath)/data_factory' #replace with the package.json folder
+          customCommand: 'run build validate $(Build.Repository.LocalPath)/data_factory /subscriptions/$(dev_subscription_id)/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.DataFactory/factories/dapalpha-adf-data-dev'
+        displayName: 'Validate'
+
+      # Validate and then generate the ARM template into the destination folder, which is the same as selecting "Publish" from the UX.
+      # The ARM template generated isn't published to the live version of the factory. Deployment should be done by using a CI/CD pipeline. 
+
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          workingDir: '$(Build.Repository.LocalPath)/data_factory' #replace with the package.json folder
+          customCommand: 'run build export $(Build.Repository.LocalPath)/data_factory /subscriptions/$(dev_subscription_id)/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.DataFactory/factories/dapalpha-adf-data-dev "ArmTemplate"'
+      #For using preview that allows you to only stop/ start triggers that are modified, please comment out the above line and uncomment the below line. Make sure the package.json contains the build-preview command. 
+       #customCommand: 'run build-preview export $(Build.Repository.LocalPath) /subscriptions/222f1459-6ebd-4896-82ab-652d5f6883cf/resourceGroups/GartnerMQ2021/providers/Microsoft.DataFactory/factories/Dev-GartnerMQ2021-DataFactory "ArmTemplate"'
+        displayName: 'Validate and Generate ARM template'
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Define the regex pattern for the substring you want to find.
+            REGEX_PATTERN='/Users/.*/dhsc-alpha-data/databricks/'
+            
+            # Define the text you want to replace the substring with.
+            REPLACEMENT_TEXT='/pipeline_workbooks/'
+            
+            # Loop through all JSON files in the directory.
+            for FILE in data_factory/ArmTemplate/*.json; do
+                # Check if file exists and is a regular file
+                if [[ -f "$FILE" ]]; then
+                    # Use Perl-compatible regex (-P) with -i for in-place replacement and -e for the expression
+                    sed -i -e "s|$REGEX_PATTERN|$REPLACEMENT_TEXT|g" "$FILE"
+                    echo "Replaced in $FILE"
+                fi
+            done
+          workingDirectory: '$(Build.Repository.LocalPath)'
+
+      # Publish the artifact to be used as a source for a release pipeline.
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Build.Repository.LocalPath)/data_factory/ArmTemplate' #replace with the package.json folder
+          artifact: 'ArmTemplates'
+          publishLocation: 'pipeline'
+  - ${{ each environment in parameters.environments}}:
+    - stage: ${{environment.name}}
+      jobs:
+      - deployment: DeployADF
+        environment: ${{environment.name}}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - task: DownloadPipelineArtifact@2
+                inputs:
+                  artifact: ARMTemplates
+                  targetPath: '$(Pipeline.Workspace)'
+              - task: AzurePowerShell@5
+                displayName: Stop ADF Triggers
+                inputs:
+                  scriptType: 'FilePath'
+                  ConnectedServiceNameARM: ${{environment.arm_connection}}
+                  scriptPath: $(Pipeline.Workspace)/PrePostDeploymentScript.ps1
+                  ScriptArguments: |
+                    -armTemplate "$(Pipeline.Workspace)/ARMTemplateForFactory.json" `
+                    -ArmTemplateParameters "$(Build.Repository.LocalPath)/data_factory/parameters/ARMTemplateParametersForFactory.${{environment.name}}.json" `
+                    -ResourceGroupName dapalpha-data-${{environment.name}}-rg `
+                    -DataFactoryName dapalpha-adf-data-${{environment.name}} `
+                    -predeployment $true `
+                    -deleteDeployment $false
+                  errorActionPreference: stop
+                  FailOnStandardError: False
+                  azurePowerShellVersion: 'LatestVersion'
+                  pwsh: True
+                  workingDirectory: ../
+              - task: AzureResourceManagerTemplateDeployment@3
+                inputs:
+                  deploymentScope: 'Resource Group'
+                  azureResourceManagerConnection: ${{environment.arm_connection}}
+                  subscriptionId: ${{environment.subscription_id}}
+                  action: 'Create Or Update Resource Group'
+                  resourceGroupName: 'dapalpha-data-${{environment.name}}-rg'
+                  location: 'UK South'
+                  templateLocation: 'Linked artifact'
+                  csmFile: '$(Pipeline.Workspace)/ARMTemplateForFactory.json'
+                  csmParametersFile: '$(Build.Repository.LocalPath)/data_factory/parameters/ARMTemplateParametersForFactory.${{environment.name}}.json'
+                  deploymentMode: 'Incremental'
+              - task: AzurePowerShell@5
+                displayName: Start ADF Triggers
+                inputs:
+                  scriptType: 'FilePath'
+                  ConnectedServiceNameARM: ${{environment.arm_connection}}
+                  scriptPath: $(Pipeline.Workspace)/PrePostDeploymentScript.ps1
+                  ScriptArguments: |
+                    -armTemplate "$(Pipeline.Workspace)/ARMTemplateForFactory.json" `
+                    -ArmTemplateParameters "$(Build.Repository.LocalPath)/data_factory/parameters/ARMTemplateParametersForFactory.${{environment.name}}.json" `
+                    -ResourceGroupName dapalpha-data-${{environment.name}}-rg `
+                    -DataFactoryName dapalpha-adf-data-${{environment.name}} `
+                    -predeployment $false `
+                    -deleteDeployment $true
+                  errorActionPreference: stop
+                  FailOnStandardError: False
+                  azurePowerShellVersion: 'LatestVersion'
+                  pwsh: True
+                  workingDirectory: ../

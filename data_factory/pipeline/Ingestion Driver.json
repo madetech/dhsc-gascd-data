@@ -1,0 +1,112 @@
+{
+	"name": "Ingestion Driver",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get enabled indicator ids",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DISTINCT indicator_id FROM Fingertips.indicator_metadata\nWHERE enabled = 1",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SQLTable",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": "Fingertips",
+							"table_name": "Indicator_Metadata"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Ingest each indicator id",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get enabled indicator ids",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get enabled indicator ids').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 5,
+					"activities": [
+						{
+							"name": "Ingestion worker",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "Ingestion Worker",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"indicator_id": {
+										"value": "@item().indicator_id",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Staging to curated table",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Ingest each indicator id",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "Fingertips.p_indicators_from_staging"
+				},
+				"linkedServiceName": {
+					"referenceName": "Analytical_Datastore",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "Fingertips"
+		},
+		"annotations": []
+	}
+}

@@ -1,0 +1,24 @@
+{
+	"name": "Indicator_Metadata_Update",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Indicator metadata",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/raw/blobs/Fingertips/Indicator_Metadata/metric_metadata.xlsx",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/2466c36e-08aa-4500-80a1-68f1a1492de9/resourceGroups/dapalpha-data-dev-rg/providers/Microsoft.Storage/storageAccounts/dapalphadatastlakedev",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

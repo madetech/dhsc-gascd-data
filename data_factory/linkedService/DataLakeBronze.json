@@ -1,0 +1,14 @@
+{
+	"name": "DataLakeBronze",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://dapalphastbronzedev.dfs.core.windows.net/"
+		},
+		"connectVia": {
+			"referenceName": "DAPAlpha-IR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

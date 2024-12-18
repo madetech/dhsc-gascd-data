@@ -1,0 +1,147 @@
+{
+	"name": "Ingestion Worker",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web to lake",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 5,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Binary_FingertipsAPI",
+						"type": "DatasetReference",
+						"parameters": {
+							"RelativeURL": {
+								"value": "@concat(\n    'all_data/csv/for_one_indicator?indicator_id=',\n    pipeline().parameters.indicator_id\n)",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Binary_Datalake",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "raw",
+							"filepath": "Fingertips/Indicators",
+							"filename": {
+								"value": "@concat('indicator_', concat(pipeline().parameters.indicator_id, '.csv'))",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Lake to SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Web to lake",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "CSV_Lake",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "raw",
+							"filepath": "Fingertips/Indicators",
+							"filename": {
+								"value": "@concat('indicator_', concat(pipeline().parameters.indicator_id, '.csv'))",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQLTable",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": "Fingertips",
+							"table_name": "indicators_staging"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"indicator_id": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Fingertips"
+		},
+		"annotations": []
+	}
+}

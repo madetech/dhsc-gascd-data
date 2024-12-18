@@ -1,0 +1,25 @@
+{
+	"name": "Binary_FingertipsAPI",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "FingertipsAPIHTTP",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"RelativeURL": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "@dataset().RelativeURL",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}
