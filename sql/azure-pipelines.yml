@@ -74,6 +74,7 @@ stages:
                   targetPath: '$(Pipeline.Workspace)'
               - task: SqlAzureDacpacDeployment@1
                 inputs:
+                  azureConnectionType: 'ConnectedServiceNameARM'
                   azureSubscription: '${{environment.arm_service_connection}}'
                   AuthenticationType: 'servicePrincipal'
                   ServerName: 'dapalpha-sql-data-${{environment.name}}.database.windows.net'
