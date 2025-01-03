@@ -22,8 +22,16 @@ parameters:
   type: object
   default:
   - name: dev
+    environment_name: 'Data - dev'
     arm_service_connection: '$(dev_arm_service_connections)'
+  - name: test
+    environment_name: 'Data - test'
+    arm_service_connection: '$(test_arm_service_connections)'
+  - name: uat
+    environment_name: 'Data - UAT'
+    arm_service_connection: '$(uat_arm_service_connections)'
   - name: prod
+    environment_name: 'Data - prod'
     arm_service_connection: '$(prod_arm_service_connections)'
 - name: skip_dev
   displayName: 'Skip dev deployment'
@@ -51,7 +59,7 @@ stages:
       condition: or(not(eq('${{environment.name}}', 'dev')), and(eq('${{environment.name}}', 'dev'), not(${{parameters.skip_dev}})))
       jobs:
       - deployment: DeployInfra
-        environment: ${{environment.name}}
+        environment: ${{environment.environment_name}}
         strategy:
           runOnce:
             deploy:
@@ -62,6 +70,7 @@ stages:
                   targetPath: '$(Pipeline.Workspace)'
               - task: SqlAzureDacpacDeployment@1
                 inputs:
+                  azureConnectionType: 'ConnectedServiceNameARM'
                   azureSubscription: '${{environment.arm_service_connection}}'
                   AuthenticationType: 'servicePrincipal'
                   ServerName: 'dapalpha-sql-data-${{environment.name}}.database.windows.net'

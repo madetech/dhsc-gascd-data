@@ -30,7 +30,7 @@
             "value": "/subscriptions/211beb99-abed-432d-b6b5-6b0a0b3bb4ac/resourceGroups/dapalpha-data-prod-rg/providers/Microsoft.Databricks/workspaces/dapalpha-dbx-data-prod"
         },
         "Databricks_properties_typeProperties_existingClusterId": {
-            "value": "0911-132319-wcrviv55"
+            "value": "1023-160517-bp0ersap"
         },
         "DataLakeDropEndpoint_properties_privateLinkResourceId":{
             "value": "/subscriptions/211beb99-abed-432d-b6b5-6b0a0b3bb4ac/resourceGroups/dapalpha-data-prod-rg/providers/Microsoft.Storage/storageAccounts/dapalphastdropprod"
