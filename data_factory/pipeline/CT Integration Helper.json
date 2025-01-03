@@ -82,7 +82,18 @@
 				"outputs": [
 					{
 						"referenceName": "Json_Datalake_Drop",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "restricted",
+							"filepath": {
+								"value": "@concat('Capacity_Tracker/Generic/',pipeline().parameters.PipelineRunDateTime)",
+								"type": "Expression"
+							},
+							"filename": {
+								"value": "@concat('offset_',variables('RecordOffset'), '.json')",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			},
@@ -181,7 +192,7 @@
 			}
 		},
 		"folder": {
-			"name": "CT-beta"
+			"name": "Capacity Tracker"
 		},
 		"annotations": []
 	}
