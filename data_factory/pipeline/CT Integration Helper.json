@@ -73,7 +73,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"RelativeURL": {
-								"value": "@concat(     'capacity-export-generic/v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY'), '&limit=',variables('BatchSize'),'&offset=',variables('RecordOffset'))",
+								"value": "@concat(     'capacity-export-generic/v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY') )",
 								"type": "Expression"
 							}
 						}
