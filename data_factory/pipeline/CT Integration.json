@@ -85,11 +85,11 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "Json_Generic_CT_API",
+						"referenceName": "Json_Capacity_Tracker",
 						"type": "DatasetReference",
 						"parameters": {
 							"RelativeURL": {
-								"value": "@concat(     'v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY') )",
+								"value": "@concat(     'capacity-export-generic/v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY') )",
 								"type": "Expression"
 							}
 						}
