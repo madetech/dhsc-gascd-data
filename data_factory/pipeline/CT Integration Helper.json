@@ -27,77 +27,6 @@
 				}
 			},
 			{
-				"name": "Copy data1",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Set RecordOffset",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": true,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "JsonSource",
-						"storeSettings": {
-							"type": "HttpReadSettings",
-							"requestMethod": "GET"
-						},
-						"formatSettings": {
-							"type": "JsonReadSettings"
-						}
-					},
-					"sink": {
-						"type": "JsonSink",
-						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
-						},
-						"formatSettings": {
-							"type": "JsonWriteSettings"
-						}
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "JSON_Capacity_Tracker_API",
-						"type": "DatasetReference",
-						"parameters": {
-							"RelativeURL": {
-								"value": "@concat(     'capacity-export-generic/v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY'), '&limit=',variables('BatchSize'),'&offset=',variables('RecordOffset'))",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "JSON_Datalake_Drop",
-						"type": "DatasetReference",
-						"parameters": {
-							"container": "restricted",
-							"filepath": {
-								"value": "@concat('Capacity_Tracker/Generic/',pipeline().parameters.PipelineRunDateTime)",
-								"type": "Expression"
-							},
-							"filename": {
-								"value": "@concat('offset_',variables('RecordOffset'), '.json')",
-								"type": "Expression"
-							}
-						}
-					}
-				]
-			},
-			{
 				"name": "Set Batch",
 				"type": "SetVariable",
 				"dependsOn": [],
@@ -161,6 +90,71 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Set RecordOffset",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "JSON_Capacity_Tracker_API",
+						"type": "DatasetReference",
+						"parameters": {
+							"RelativeURL": {
+								"value": "@concat(     'capacity-export-generic/v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY'), '&limit=',variables('BatchSize'),'&offset=',variables('RecordOffset'))",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "JSON_Datalake_Drop",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "restricted",
+							"filepath": "@concat('Capacity_Tracker/Generic/',pipeline().parameters.PipelineRunDateTime)",
+							"filename": "@concat('offset_',variables('RecordOffset'), '.json')"
+						}
+					}
+				]
 			}
 		],
 		"parameters": {
