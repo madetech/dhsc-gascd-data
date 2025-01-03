@@ -1,0 +1,182 @@
+{
+	"name": "CT Integration Helper",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set RecordOffset",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Secret",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "RecordOffset",
+					"value": {
+						"value": "@mul(variables('Batch'),variables('BatchSize'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Set RecordOffset",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Json_Generic_CT_API",
+						"type": "DatasetReference",
+						"parameters": {
+							"RelativeURL": {
+								"value": "@concat(     'v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY'), '&limit=',variables('BatchSize'),'&offset=',variables('RecordOffset'))",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Set Batch",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Batch",
+					"value": {
+						"value": "@pipeline().parameters.Batch",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set BatchSize",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Batch",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "BatchSize",
+					"value": {
+						"value": "@pipeline().parameters.BatchSize",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Secret",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set BatchSize",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "CAPACITY-TRACKER-API-KEY",
+					"value": {
+						"value": "@pipeline().parameters.Key",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"Batch": {
+				"type": "int"
+			},
+			"BatchSize": {
+				"type": "int"
+			},
+			"Key": {
+				"type": "string"
+			},
+			"PipelineRunDateTime": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"RecordOffset": {
+				"type": "Integer"
+			},
+			"Batch": {
+				"type": "Integer"
+			},
+			"BatchSize": {
+				"type": "Integer"
+			},
+			"CAPACITY-TRACKER-API-KEY": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Capacity Tracker"
+		},
+		"annotations": []
+	}
+}

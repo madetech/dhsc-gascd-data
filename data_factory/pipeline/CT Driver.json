@@ -1,0 +1,77 @@
+{
+	"name": "CT Driver",
+	"properties": {
+		"activities": [
+			{
+				"name": "Ingest",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Set date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "CT Integration",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PipelineRunDateTime": {
+							"value": "@variables('CurrentDateTime')",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Set date",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "CurrentDateTime",
+					"value": {
+						"value": "@formatDateTime(utcnow(), 'yyyyMMddHHmmss')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"CurrentDateTime": {
+				"type": "String"
+			},
+			"MaxBatch": {
+				"type": "Integer"
+			},
+			"RecordOffset": {
+				"type": "Integer"
+			},
+			"Batch": {
+				"type": "Integer"
+			},
+			"BatchSize": {
+				"type": "Integer"
+			},
+			"CAPACITY-TRACKER-API-KEY": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Capacity Tracker"
+		},
+		"annotations": []
+	}
+}

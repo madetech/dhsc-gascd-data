@@ -1,0 +1,261 @@
+{
+	"name": "CT Integration",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get secret",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@concat(\n    'https://dapalpha-kv-'\n    , replace(pipeline().DataFactory, 'dapalpha-adf-data-', ''),\n    '.vault.azure.net/secrets/CAPACITY-TRACKER-API-KEY?api-version=7.4'\n)",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "DAPAlpha-IR",
+						"type": "IntegrationRuntimeReference"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net/"
+					}
+				}
+			},
+			{
+				"name": "Set secret",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get secret",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "CAPACITY-TRACKER-API-KEY",
+					"value": {
+						"value": "@activity('Get secret').output.value",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get number of rows",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Set secret",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "Json_Generic_CT_API",
+						"type": "DatasetReference",
+						"parameters": {
+							"RelativeURL": {
+								"value": "@concat(     'v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY') )",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "Set RecordCount",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get number of rows",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "RecordCount",
+					"value": {
+						"value": "@int(activity('Get number of rows').output.firstRow.totalItems)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set BatchSize",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set RecordCount",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "BatchSize",
+					"value": {
+						"value": "@int('10000')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Batches",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set BatchSize",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Batches",
+					"value": {
+						"value": "@range(0, add(div(variables('RecordCount'), variables('BatchSize')),1))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Set Batches",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('Batches')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Execute Helper",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "CT Integration Helper",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"Batch": {
+										"value": "@item()",
+										"type": "Expression"
+									},
+									"BatchSize": {
+										"value": "@variables('BatchSize')",
+										"type": "Expression"
+									},
+									"Key": {
+										"value": "@variables('CAPACITY-TRACKER-API-KEY')",
+										"type": "Expression"
+									},
+									"PipelineRunDateTime": {
+										"value": "@pipeline().parameters.PipelineRunDateTime",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"PipelineRunDateTime": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"RecordCount": {
+				"type": "Integer"
+			},
+			"CAPACITY-TRACKER-API-KEY": {
+				"type": "String"
+			},
+			"RecordOffset": {
+				"type": "Integer"
+			},
+			"RecordOffsetTemp": {
+				"type": "Integer"
+			},
+			"BatchSize": {
+				"type": "Integer"
+			},
+			"Batches": {
+				"type": "Array"
+			},
+			"Batch": {
+				"type": "Integer"
+			}
+		},
+		"folder": {
+			"name": "Capacity Tracker"
+		},
+		"annotations": []
+	}
+}
