@@ -7,10 +7,6 @@
 			"url": "https://capacitytracker.com/",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
-		},
-		"connectVia": {
-			"referenceName": "DAPAlpha-IR",
-			"type": "IntegrationRuntimeReference"
 		}
 	}
 }
