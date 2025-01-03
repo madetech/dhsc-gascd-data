@@ -42,7 +42,7 @@
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": true,
-					"secureInput": true
+					"secureInput": false
 				},
 				"userProperties": [],
 				"typeProperties": {
@@ -73,7 +73,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"RelativeURL": {
-								"value": "@concat(     'capacity-export-generic/v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY') )",
+								"value": "@concat(     'capacity-export-generic/v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY'), '&limit=',variables('BatchSize'),'&offset=',variables('RecordOffset'))",
 								"type": "Expression"
 							}
 						}
