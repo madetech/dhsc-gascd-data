@@ -90,48 +90,6 @@
 						"type": "Expression"
 					}
 				}
-			},
-			{
-				"name": "Get number of rows",
-				"type": "Lookup",
-				"dependsOn": [
-					{
-						"activity": "Set RecordOffset",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": true
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "JsonSource",
-						"storeSettings": {
-							"type": "HttpReadSettings",
-							"requestMethod": "GET"
-						},
-						"formatSettings": {
-							"type": "JsonReadSettings"
-						}
-					},
-					"dataset": {
-						"referenceName": "JSON_Capacity_Tracker_API",
-						"type": "DatasetReference",
-						"parameters": {
-							"RelativeURL": {
-								"value": "@concat(     'capacity-export-generic/v4.8/?key=', variables('CAPACITY-TRACKER-API-KEY') )",
-								"type": "Expression"
-							}
-						}
-					}
-				}
 			}
 		],
 		"parameters": {
