@@ -85,7 +85,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "Json_Capacity_Tracker",
+						"referenceName": "JSON_Capacity_Tracker_API",
 						"type": "DatasetReference",
 						"parameters": {
 							"RelativeURL": {

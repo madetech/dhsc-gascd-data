@@ -1,5 +1,5 @@
 {
-	"name": "Json_Datalake_Drop",
+	"name": "JSON_Datalake_Drop",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "DataLakeDrop",

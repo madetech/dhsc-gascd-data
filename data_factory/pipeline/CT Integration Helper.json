@@ -69,7 +69,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Json_Generic_CT_API",
+						"referenceName": "JSON_Capacity_Tracker_API",
 						"type": "DatasetReference",
 						"parameters": {
 							"RelativeURL": {
@@ -81,8 +81,19 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "Json_Datalake_Drop",
-						"type": "DatasetReference"
+						"referenceName": "JSON_Datalake_Drop",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "restricted",
+							"filepath": {
+								"value": "@concat('Capacity_Tracker/Generic/',pipeline().parameters.PipelineRunDateTime)",
+								"type": "Expression"
+							},
+							"filename": {
+								"value": "@concat('offset_',variables('RecordOffset'), '.json')",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			},

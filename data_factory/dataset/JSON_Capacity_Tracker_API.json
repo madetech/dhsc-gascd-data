@@ -1,5 +1,5 @@
 {
-	"name": "Json_Capacity_Tracker",
+	"name": "JSON_Capacity_Tracker_API",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "CapacityTrackerHTTP",
